@@ -12,7 +12,7 @@
 
 ## 变量
 
-## 特殊变量
+### 特殊变量
 
 | 变量名 |       含义       | 变量名 |       含义       |
 | ------ |------------------| ------ |------------------|
@@ -20,6 +20,67 @@
 | $1     | 第一个命令行参数 | $!     | 上一个后台进程PID|
 | $$     | 脚本的PID        | $@     | 所有的参数       |
 | $*     | 所有的参数       | $_     | 上一个命令的最后一个参数 |
+
+### 变量替换
+
+操作或者扩展变量
+
+* ${parameter} : 和 $parameter 含义一样，表示变量parameter的值. 在某些上下文中，$parameter容易产生歧义，用${parameter}更好
+* ${parameter-default}, ${parameter:-default} : 当parameter没有set的时候，**使用**defaut值。这两种表示的区别在于当parameter为null时，
+* ${parameter=default}, ${parameter:=default} : 当parameter没有set的时候，**设置**defaut值。
+* ${parameter+alt_value}, ${parameter:+alt_value} : 如果parameter有set, 使用alt_value, 否则使用null string.
+* ${parameter?err_msg}, ${parameter:?err_msg} : 如果parameter没有set， 打印错误信息，并以退出码1退出
+
+带有:的情况在parameter为null string和unset/set的时候有相同的语义
+
+例子:
+
+    #!/bin/bash
+    
+    USER=`who am i | cut -d ' ' -f1`
+    echo ${USER}
+    
+    echo "USER is unset"
+    unset USER
+    echo ${USER-root}     # root
+    echo ${USER:-root}    # root
+    
+    echo "USER is empty"
+    USER=''
+    echo ${USER-root}     # empty
+    echo ${USER:-root}    # root  
+    
+    echo "USER is unset"
+    unset USER
+    echo ${USER=root}     #root  
+    unset USER
+    echo ${USER:=root}    #root
+    
+    echo "USER is empty"
+    USER=''
+    echo ${USER=root}     #empty
+    echo ${USER:=root}    #root  
+    
+    
+    echo "USER is set"
+    USER="nobody"
+    echo ${USER+root}    # root
+    echo ${USER:+root}   # root
+    
+    echo "USER is empty"
+    USER=
+    echo ${USER+root}    # root
+    echo ${USER:+root}   # empty
+    
+    echo "USER is unset"
+    unset USER
+    echo ${USER+root}    # empty
+    echo ${USER:+root}   # empty
+    
+    echo "USER is unset"
+    
+    # ${USER?"user is unset"} 
+    # ${USER:?"user is unset"} 
 
 ## 算术运算扩展
 
