@@ -1,5 +1,15 @@
 # BASH
 
+## 运行脚本
+有很多中方法
+* 在脚本的第一行加上#!/bin/bash, 然后保证脚本具有可读以及执行权限。添加可读以及执行权限的方法
+
+	chmod 555 scriptname  # 每个人都有可读和执行权限
+	chmod +rx scriptname  # 每个人都有可读和执行权限
+	chmod u+rx scriptname # 只有用户有可读和执行权限
+
+* 使用bash scriptname的方式执行
+
 ## 变量
 
 ## 特殊变量
