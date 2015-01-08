@@ -10,6 +10,11 @@
 
 * 使用bash scriptname的方式执行
 
+## 检查脚本得语法方法
+
+    $bash -n scriptname
+
+上面可以用来检查明显的语法错误。另外从网上发现一个可以检查代码风格的工具[shelllint](http://www.shellcheck.net/about.html)
 ## 变量
 
 ### 特殊变量
