@@ -158,4 +158,204 @@ END 块和BEGIN块一样只会执行一次,在body block执行完所有行后开
     for(initialization;condition;increment/decrement)
         actions
 
+### break, continue and exit
 
+这些含义和C语言中的类似
+
+## 关联数组
+awk 中的数组是关联数组。语法如下:
+
+    arrayname[string]=value
+
+在awk中，index总是string，当你传入数字的时候，也会转成string.下面的语句是等价的。 
+
+    item[101]="HD Camcorder"
+    item["101"]="HD Camcorder"
+
+在awk中，如果引用一个不存在的index，会创建这个index，然后赋值为null。可以通过使用前检查避免这个
+
+    if (index in arrayname) 
+
+
+例子：
+
+    $ cat array-assign.awk
+    BEGIN {
+        item[101]="HD Camcorder";
+        item[102]="Refrigerator";
+        item[103]="MP3 Player";
+        item[104]="Tennis Racket";
+        item[105]="Laser Printer";
+        item[1001]="Tennis Ball";
+        item[55]="Laptop";
+        item["na"]="Not Available";
+        print item["101"];
+        print item[102];
+        print item["103"];
+        print item[104];
+        print item["105"];
+        print item[1001];
+        print item[55];
+        print item["na"];
+        print item["nonexist"];
+    }
+    $ awk -f array-assign.awk
+    HD Camcorder
+    Refrigerator
+    MP3 Player
+    Tennis Racket
+    Laser Printer
+    Tennis Ball
+    Laptop
+    Not Available
+
+
+### 数组遍历
+
+遍历数组可可以使用如下方法:
+
+    for (var in arrayname) 
+        action
+
+var表示数组中的index。
+
+### 删除数组元素和数组
+
+    delete arrayname[index];
+    delete array; # [GAWK]
+
+### 多维数组
+
+例子：
+
+    $ cat array-multi2.awk
+    BEGIN {
+    item[1,1]=10;
+    item[1,2]=20;
+    item[2,1]=30;
+    item[2,2]=40;
+    for (x in item)
+    print item[x];
+    }
+    $ awk -f array-multi2.awk
+    30
+    40
+    10
+    20
+   
+上面中，纬度之间有\034这个非打印字符分隔开来。我们可以指定一个自己的分隔符. 类似前面的FS,OFS等，使用变量SUBSEP可以指定.
+
+
+### 数组排序
+语法如下：
+
+    asort(arrayname)
+
+1. 返回值为数组中元素的个数
+2. 排序后，index变为1到n（假设有n个元素）
+
+
+类似的对index排序的有asorti函数
+
+
+## 其他awk命令
+
+### printf
+printf 函数，类似C语言中的printf,但是不会使用OFS,ORS
+
+* s String
+* c Single Character
+* d Decimal
+* e Exponential Floating point
+* f Fixed Floating point
+* g Uses either e or f depending on which is
+* smaller for the given input
+* o Octal
+* x Hexadecimal
+* % Prints the percentage symbol
+
+### 算术运算
+1. int(n) 取整数部分
+2. log(n) 自然对数
+3. sqrt(n) n^(1/2)
+4. exp(n) e^n
+5. sin(n)
+6. cos(n)
+7. atan(m, n)
+8. rand() 产生0到1之间的随机数
+
+### 字符串函数
+
+1. index
+2. length
+3. split
+4. substr
+5. sub
+6. Gsub
+7. match
+8. ARGC, ARGV, ARGIND
+* ARGC， 参数个数
+* ARGV， 参数数组
+* ARGIND 参数索引
+
+例子：
+
+    $ cat arguments.awk
+    BEGIN {
+    print "ARGC=",ARGC
+    for (i = 0; i < ARGC; i++)
+    print ARGV[i]
+    }
+    $ awk -f arguments.awk arg1 arg2 arg3 arg4 arg5
+    ARGC= 6
+    awk
+    arg1
+    arg2
+    arg3
+    arg4
+    arg5
+
+### awk profiler, pgawk
+
+pgawk可以显示每条awk语句执行的次数，用法:
+
+    $ pgawk --profile=myprofiler.out -f profiler.awk items.txt
+
+### 位运算
+
+### 系统函数
+
+    $ awk 'BEGIN { system("pwd") }'
+    /home/ramesh
+    $ awk 'BEGIN { system("date") }'
+    Sat Mar 5 09:19:47 PST 2011
+
+### 时间戳函数(GAWK)
+
+    $awk 'BEGIN { print systime(); }'
+
+
+    $awk 'BEGIN { print systime(); }'
+
+### 读取行(getline)
+
+
+例子(从外部文件读取行)
+
+    $ awk -F"," '{print $0; getline tmp < "items-sold.txt"; print tmp;}' items.txt
+
+例子(执行外部命令然后获取结果) ：
+
+    BEGIN {
+        FS=",";
+        "date" | getline # default storing to $0
+        close("date")
+        print "Timestamp:" $0
+    }
+
+    BEGIN {
+        FS=",";
+        "date" | getline timestamp
+        close("date")
+        print "Timestamp:" timestamp
+    }
