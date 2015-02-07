@@ -104,6 +104,10 @@
 
 上面两个正常的输出中，var都为89，说明子进程和父进程共享内存
 
+## exit 和 _exit
+
+
+
 ## 参考
 
 [1] http://coolshell.cn/articles/12103.html#more-12103
